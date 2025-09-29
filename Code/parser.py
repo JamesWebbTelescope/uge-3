@@ -62,4 +62,7 @@ database.get()
 with open('data/Cereal.csv', mode='r') as file:
     csvFile = csv.reader(file)
     for lines in csvFile:
-        print(lines)
+        for line in lines:
+            newline = line.replace(";", ",")
+            print(newline)
+            database.put(newline)
