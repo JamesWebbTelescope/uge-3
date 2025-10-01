@@ -34,18 +34,39 @@ class database_class:
         # Do something with result.
         print(result)
 
-    def find(self):
+    def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating):
         cursor = self.connector.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
-        result = (cursor.fetchall(), cursor.fetchwarnings())
+        if(name.find(",") > -1):
+            name_escape = name.replace(",", "/,")
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            #print(command)
+            cursor.execute(command)
+        if(name.find("'") > -1):
+            name_escape = name.replace("'", "\"")
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            #print(command)
+            cursor.execute(command)
+        else:
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            #print(command)
+            cursor.execute(command)
+        #cursor.execute("INSERT INTO cerealdatabase.cereal VALUES ('{name}', 'N', 'C', 70, 4.0, 1.0, 130, '10', 5, 6, 280, 25, 3, '1', '0.33', '68.402.973')")
+        if cursor.with_rows == True:
+            result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        else:
+            result = cursor.fetchwarnings()
+        self.connector.commit()
 
-        print(result)
+        # Close cursor
+        cursor.close()
+
+        # Do something with result.
+        #print(result)
+
 
 database = database_class()
 
 database.open_connection()
-
-database.get()
 
 
 

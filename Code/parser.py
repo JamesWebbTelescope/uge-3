@@ -35,13 +35,6 @@ class database_class:
         # Do something with result.
         print(result)
 
-    def find(self):
-        cursor = self.connector.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
-        result = (cursor.fetchall(), cursor.fetchwarnings())
-
-        print(result)
-
     def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating):
         cursor = self.connector.cursor(dictionary=True)
         if(name.find(",") > -1):
