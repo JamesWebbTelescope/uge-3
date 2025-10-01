@@ -35,9 +35,34 @@ class database_class:
         # Do something with result.
         print(result)
 
-    def put(self, data):
+    def find(self):
         cursor = self.connector.cursor(dictionary=True)
-        cursor.execute("INSERT INTO cerealdatabase.cereal VALUES ('100% Bran','N','C','70','4','1','130','10','5','6','280','25','3','1','0.33','68.402.973')")
+        cursor.execute("SELECT * FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
+        if cursor.with_rows == True:
+            result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        else:
+            result = cursor.fetchwarnings()
+        self.connector.commit()
+
+        print(result)
+
+    def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating):
+        cursor = self.connector.cursor(dictionary=True)
+        if(name.find(",") > -1):
+            name_escape = name.replace(",", "/,")
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            #print(command)
+            cursor.execute(command)
+        if(name.find("'") > -1):
+            name_escape = name.replace("'", "\"")
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            #print(command)
+            cursor.execute(command)
+        else:
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            #print(command)
+            cursor.execute(command)
+        #cursor.execute("INSERT INTO cerealdatabase.cereal VALUES ('{name}', 'N', 'C', 70, 4.0, 1.0, 130, '10', 5, 6, 280, 25, 3, '1', '0.33', '68.402.973')")
         if cursor.with_rows == True:
             result = ( cursor.fetchall(), cursor.fetchwarnings() )
         else:
@@ -48,21 +73,23 @@ class database_class:
         cursor.close()
 
         # Do something with result.
-        print(result)
+        #print(result)
 
 
 database = database_class()
 
 database.open_connection()
 
-database.get()
-
-#database.put()
+database.find()
 
 with open('data/Cereal.csv', mode='r') as file:
-    csvFile = csv.reader(file)
+    csvFile = csv.reader(file, delimiter=';')
+    i = 0
     for lines in csvFile:
-        for line in lines:
-            newline = line.replace(";", ",")
-            print(newline)
-            database.put(newline)
+        i = i + 1
+        cereal_data = []
+        if not i > 2:
+            continue
+        cereal_data.append(lines)
+        #print(cereal_data[0])    
+        database.put(cereal_data[0][0], cereal_data[0][1], cereal_data[0][2], cereal_data[0][3], cereal_data[0][4], cereal_data[0][5], cereal_data[0][6], cereal_data[0][7], cereal_data[0][8], cereal_data[0][9], cereal_data[0][10], cereal_data[0][11], cereal_data[0][12], cereal_data[0][13], cereal_data[0][14], cereal_data[0][15])
