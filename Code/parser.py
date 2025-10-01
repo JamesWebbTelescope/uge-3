@@ -37,12 +37,8 @@ class database_class:
 
     def find(self):
         cursor = self.connector.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
-        if cursor.with_rows == True:
-            result = ( cursor.fetchall(), cursor.fetchwarnings() )
-        else:
-            result = cursor.fetchwarnings()
-        self.connector.commit()
+        cursor.execute("SELECT ï»¿name FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
+        result = (cursor.fetchall(), cursor.fetchwarnings())
 
         print(result)
 
