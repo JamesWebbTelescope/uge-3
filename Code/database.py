@@ -34,6 +34,13 @@ class database_class:
         # Do something with result.
         print(result)
 
+    def find(self):
+        cursor = self.connector.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
+        result = (cursor.fetchall(), cursor.fetchwarnings())
+
+        print(result)
+
 database = database_class()
 
 database.open_connection()

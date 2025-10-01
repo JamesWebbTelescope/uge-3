@@ -37,7 +37,7 @@ class database_class:
 
     def find(self):
         cursor = self.connector.cursor(dictionary=True)
-        cursor.execute("SELECT ï»¿name FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
+        cursor.execute("SELECT * FROM cerealdatabase.cereal WHERE ï»¿name='100% Bran'")
         result = (cursor.fetchall(), cursor.fetchwarnings())
 
         print(result)
