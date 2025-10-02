@@ -35,20 +35,20 @@ class database_class:
         # Do something with result.
         print(result)
 
-    def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating):
+    def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating, ID):
         cursor = self.connector.cursor(dictionary=True)
         if(name.find(",") > -1):
             name_escape = name.replace(",", "/,")
-            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}', {ID})"
             #print(command)
             cursor.execute(command)
         if(name.find("'") > -1):
             name_escape = name.replace("'", "\"")
-            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}', {ID})"
             #print(command)
             cursor.execute(command)
         else:
-            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}', {ID})"
             #print(command)
             cursor.execute(command)
         #cursor.execute("INSERT INTO cerealdatabase.cereal VALUES ('{name}', 'N', 'C', 70, 4.0, 1.0, 130, '10', 5, 6, 280, 25, 3, '1', '0.33', '68.402.973')")
@@ -79,4 +79,4 @@ with open('data/Cereal.csv', mode='r') as file:
             continue
         cereal_data.append(lines)
         #print(cereal_data[0])    
-        database.put(cereal_data[0][0], cereal_data[0][1], cereal_data[0][2], cereal_data[0][3], cereal_data[0][4], cereal_data[0][5], cereal_data[0][6], cereal_data[0][7], cereal_data[0][8], cereal_data[0][9], cereal_data[0][10], cereal_data[0][11], cereal_data[0][12], cereal_data[0][13], cereal_data[0][14], cereal_data[0][15])
+        database.put(cereal_data[0][0], cereal_data[0][1], cereal_data[0][2], cereal_data[0][3], cereal_data[0][4], cereal_data[0][5], cereal_data[0][6], cereal_data[0][7], cereal_data[0][8], cereal_data[0][9], cereal_data[0][10], cereal_data[0][11], cereal_data[0][12], cereal_data[0][13], cereal_data[0][14], cereal_data[0][15], i)
