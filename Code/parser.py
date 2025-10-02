@@ -69,8 +69,6 @@ database = database_class()
 
 database.open_connection()
 
-database.find()
-
 with open('data/Cereal.csv', mode='r') as file:
     csvFile = csv.reader(file, delimiter=';')
     i = 0

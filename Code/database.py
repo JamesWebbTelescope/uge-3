@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 
 
-class database_class:
+class database_class():
     def __new__(db_a):
         if not hasattr(db_a, 'instance'):
             db_a.instance = super(database_class, db_a).__new__(db_a)
@@ -35,7 +35,7 @@ class database_class:
         cursor.close()
 
         # Do something with result.
-        print(result)
+        return result
 
     def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating):
         cursor = self.connector.cursor(dictionary=True)
@@ -64,14 +64,21 @@ class database_class:
         cursor.close()
 
         # Do something with result.
-        #print(result)
+        print(result)
+
+    def find(self, ID):
+        cursor = self.connector.cursor(dictionary=True)
+        command = f"SELECT * FROM cerealdatabase.cereal WHERE ID = {ID}"
+        cursor.execute(command)
+        if cursor.with_rows == True:
+            result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        else:
+            result = cursor.fetchwarnings()
+        self.connector.commit()
+        cursor.close()
+        return result
 
 
-database = database_class()
-
-app = Flask(__name__)
-# creating an API object
-api = Api(app)
 
 # making a class for a particular resource
 # the get, post methods correspond to get and post requests
@@ -88,7 +95,7 @@ class Hello(Resource):
 
     # Corresponds to POST request
     def post(self):
-        
+
         data = request.get_json()     # status code
         return jsonify({'data': data}), 201
 
@@ -100,20 +107,36 @@ class Square(Resource):
 
         return jsonify({'square': num**2})
     
-class Requests(Resource):
+class Read(Resource):
     type = "None"
+    database = database_class()
+    def get(self, id):
+        self.database.open_connection()
+        if id == 0:
+            return jsonify({'message': self.database.get()})
+        else:
+            return jsonify({'message': self.database.find(id)})
+    
+class Create(Resource):
+    database = database_class()
+    def post(self):
+        self.database.open_connection()
+        new_book = request.json
+        print(new_book)
+        result = self.database.find(1)
+        return jsonify({'message': result})
+    
 
-    @staticmethod
-    def create(request_type):
-        if request_type == "Update":
-            type = "Request"
-
-
+app = Flask(__name__)
+# creating an API object
+api = Api(app)
 
 
 # adding the defined resources along with their corresponding urls
 api.add_resource(Hello, '/')
 api.add_resource(Square, '/square/<int:num>')
+api.add_resource(Read, '/get/<int:id>')
+api.add_resource(Create, '/create/')
 
 
 # driver function
