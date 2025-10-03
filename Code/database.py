@@ -5,45 +5,46 @@ from flask_restful import Resource, Api
 
 class database_class():
     def __new__(db_a):
-        if not hasattr(db_a, 'instance'):
+        #I am using the Singleton pattern to ensure that only one instance of the database_class exists.
+        #That way, I avoid having multiple objects trying to access the same database
+        if not hasattr(db_a, 'instance'): #If an instance of this class already exists
             db_a.instance = super(database_class, db_a).__new__(db_a)
-        return db_a.instance
+        return db_a.instance #Return that instance
     
     def open_connection(self):
-        self.connector = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "MYSQL1234.com"
+        #This is where I connect to the database
+        self.connector = mysql.connector.connect( #Set the web address, user and password for connecting to the database
+            host = "localhost",
+            user = "root",
+            password = "MYSQL1234.com"
         )
-        self.connector.database = "cereal_database"
+        self.connector.database = "cerealdatabase" #choose which database I want to connect to
     
     def get(self, criteria, value):
-
-        # Instantiate connector.
-        # Set database.
-
+        #This function does two things depending on the arguments.
+        #If no criteria are given, it just returns everything in the database.
+        #If a filter criteria is given with no value, it returns "No criteria given"
+        #If a criteria is given with values, it searches the database for all data points with that criteria and returns them.
         # Open a cursor.
-        cursor = self.connector.cursor(dictionary=True)
-        if(criteria == 'None'):
-            cursor.execute("SELECT * FROM cerealdatabase.cereal;")
-            if cursor.with_rows == True:
-                result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        cursor = self.connector.cursor(dictionary=True) #Open a cursor
+        if(criteria == 'None'): #If there are no criteria.
+            cursor.execute("SELECT * FROM cerealdatabase.cereal;") #Set the command to just return everything in the database.
+            if cursor.with_rows == True: #If I get a response 
+                result = ( cursor.fetchall(), cursor.fetchwarnings() ) #Get the full response
             else:
-                result = cursor.fetchwarnings()
-        elif value > 0:
-            cursor.execute(F"SELECT * FROM cerealdatabase.cereal WHERE {criteria} = {value};")
+                result = cursor.fetchwarnings() #Otherwise, just get the warnings, so I can figure out what went wrong.
+        elif value > 0: #If we have a criteria and the value we're looking for is more than 0
+            cursor.execute(F"SELECT * FROM cerealdatabase.cereal WHERE {criteria} = {value};") #Get all data points where the value matches.
             if cursor.with_rows == True:
                 result = ( cursor.fetchall(), cursor.fetchwarnings() )
             else:
                 result = cursor.fetchwarnings()
         else:
             result = "No criteria given"
-        self.connector.commit()
+        self.connector.commit() #Close the connection
 
-        # Close cursor
-        cursor.close()
+        cursor.close() #Close the cursor
 
-        # Do something with result.
         return result
 
     def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating):
@@ -60,7 +61,6 @@ class database_class():
             cursor.execute(command)
         else:
             command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
-            #print(command)
             cursor.execute(command)
         #cursor.execute("INSERT INTO cerealdatabase.cereal VALUES ('{name}', 'N', 'C', 70, 4.0, 1.0, 130, '10', 5, 6, 280, 25, 3, '1', '0.33', '68.402.973')")
         if cursor.with_rows == True:
@@ -94,12 +94,12 @@ class database_class():
         command = f"DELETE FROM cerealdatabase.cereal WHERE ID = {ID}" #Set the command including custom ID
         cursor.execute(command) #Send the command to the database so it can be executed
         if cursor.with_rows == True: #Check whether I receive anything
-            result = ( cursor.fetchall(), cursor.fetchwarnings() ) #
+            result = ( cursor.fetchall(), cursor.fetchwarnings() ) #If I received something, get it
         else:
-            result = cursor.fetchwarnings()
-        self.connector.commit()
-        cursor.close()
-        return result
+            result = cursor.fetchwarnings() #Else, just get the warnings so I can figure out what went wrong
+        self.connector.commit() #Close the connection
+        cursor.close() #End the cursor
+        return result #Return a string showing whether I managed to delete the product from the database or not.
 
 
 
