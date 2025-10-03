@@ -76,23 +76,25 @@ class database_class():
         print(result)
 
     def find(self, ID):
-        cursor = self.connector.cursor(dictionary=True)
-        command = f"SELECT * FROM cerealdatabase.cereal WHERE ID = {ID}"
-        cursor.execute(command)
-        if cursor.with_rows == True:
-            result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        #This function searches the database for products with the given ID
+        cursor = self.connector.cursor(dictionary=True) #Get a cursor for the database
+        command = f"SELECT * FROM cerealdatabase.cereal WHERE ID = {ID}" #Make the command including ID as a formatted string.
+        cursor.execute(command) #Send the command to the database
+        if cursor.with_rows == True: #If I actually get something back
+            result = ( cursor.fetchall(), cursor.fetchwarnings() ) #Get the results including warnings
         else:
-            result = cursor.fetchwarnings()
-        self.connector.commit()
-        cursor.close()
-        return result
+            result = cursor.fetchwarnings() #Get the warnings, so I can figure out what went wrong.
+        self.connector.commit() #Close the connection
+        cursor.close() #End the cursor
+        return result #Returns a string either with the desired product or nothing
     
     def remove(self, ID):
-        cursor = self.connector.cursor(dictionary=True)
-        command = f"DELETE FROM cerealdatabase.cereal WHERE ID = {ID}"
-        cursor.execute(command)
-        if cursor.with_rows == True:
-            result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        #This function removes products with the given ID from the database
+        cursor = self.connector.cursor(dictionary=True) #Get a cursor
+        command = f"DELETE FROM cerealdatabase.cereal WHERE ID = {ID}" #Set the command including custom ID
+        cursor.execute(command) #Send the command to the database so it can be executed
+        if cursor.with_rows == True: #Check whether I receive anything
+            result = ( cursor.fetchall(), cursor.fetchwarnings() ) #
         else:
             result = cursor.fetchwarnings()
         self.connector.commit()
@@ -106,7 +108,8 @@ class database_class():
 # the get, post methods correspond to get and post requests
 # they are automatically mapped by flask_restful.
 # other methods include put, delete, etc.
-class Hello(Resource):
+# To make the code easier to read, I have one resource per type of request.
+class Startpage(Resource):
 
     # corresponds to the GET request.
     # this function is called whenever there
@@ -121,13 +124,6 @@ class Hello(Resource):
         data = request.get_json()     # status code
         return jsonify({'data': data}), 201
 
-
-# another resource to calculate the square of a number
-class Square(Resource):
-
-    def get(self, num):
-
-        return jsonify({'square': num**2})
     
 class Read(Resource):
     type = "None"
@@ -172,7 +168,7 @@ api = Api(app)
 
 
 # adding the defined resources along with their corresponding urls
-api.add_resource(Hello, '/')
+api.add_resource(Startpage, '/')
 api.add_resource(Read, '/get/')
 api.add_resource(Create, '/create/')
 api.add_resource(Delete, '/delete/<int:id>')
