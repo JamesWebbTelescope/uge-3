@@ -17,18 +17,27 @@ class database_class():
         )
         self.connector.database = "cereal_database"
     
-    def get(self):
+    def get(self, criteria, value):
 
         # Instantiate connector.
         # Set database.
 
         # Open a cursor.
         cursor = self.connector.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM cerealdatabase.cereal;")
-        if cursor.with_rows == True:
-            result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        if(criteria == 'None'):
+            cursor.execute("SELECT * FROM cerealdatabase.cereal;")
+            if cursor.with_rows == True:
+                result = ( cursor.fetchall(), cursor.fetchwarnings() )
+            else:
+                result = cursor.fetchwarnings()
+        elif value > 0:
+            cursor.execute(F"SELECT * FROM cerealdatabase.cereal WHERE {criteria} = {value};")
+            if cursor.with_rows == True:
+                result = ( cursor.fetchall(), cursor.fetchwarnings() )
+            else:
+                result = cursor.fetchwarnings()
         else:
-            result = cursor.fetchwarnings()
+            result = "No criteria given"
         self.connector.commit()
 
         # Close cursor
@@ -77,6 +86,19 @@ class database_class():
         self.connector.commit()
         cursor.close()
         return result
+    
+    def remove(self, ID):
+        cursor = self.connector.cursor(dictionary=True)
+        command = f"DELETE FROM cerealdatabase.cereal WHERE ID = {ID}"
+        cursor.execute(command)
+        if cursor.with_rows == True:
+            result = ( cursor.fetchall(), cursor.fetchwarnings() )
+        else:
+            result = cursor.fetchwarnings()
+        self.connector.commit()
+        cursor.close()
+        return result
+
 
 
 
@@ -110,12 +132,17 @@ class Square(Resource):
 class Read(Resource):
     type = "None"
     database = database_class()
-    def get(self, id):
+    def get(self):
         self.database.open_connection()
-        if id == 0:
-            return jsonify({'message': self.database.get()})
+        criteria = request.args.get("criteria")
+        if criteria == None:
+            result = self.database.get('None', 0)
+            return jsonify({'message': result})
         else:
-            return jsonify({'message': self.database.find(id)})
+            values = request.args.get("values",-1,  type=int)
+            result = self.database.get(criteria, values)
+            return jsonify({'message': result})
+        #return jsonify({'message': self.database.find(id)})
     
 class Create(Resource):
     database = database_class()
@@ -126,6 +153,18 @@ class Create(Resource):
         result = self.database.find(1)
         return jsonify({'message': result})
     
+class Delete(Resource):
+    database = database_class()
+    def delete(self, id):
+        self.database.open_connection()
+        result = self.database.find(id)
+        if len(result[0]) > 0:
+            result = self.database.remove(id)
+            return jsonify({'result': result})
+        else:
+            return jsonify({'message': 'The ID doesn\'t exist'})
+
+    
 
 app = Flask(__name__)
 # creating an API object
@@ -134,9 +173,9 @@ api = Api(app)
 
 # adding the defined resources along with their corresponding urls
 api.add_resource(Hello, '/')
-api.add_resource(Square, '/square/<int:num>')
-api.add_resource(Read, '/get/<int:id>')
+api.add_resource(Read, '/get/')
 api.add_resource(Create, '/create/')
+api.add_resource(Delete, '/delete/<int:id>')
 
 
 # driver function
