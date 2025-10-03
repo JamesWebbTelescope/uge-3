@@ -1,17 +1,18 @@
-Cereal REST API
+<h1>Cereal REST API</h1>
 A simple REST API for a list of cereal products.
 
-Description
-An in-depth paragraph about your project and overview of use.
+<h1>Description</h1>
+Ths project is a simple locally based API for cereal products. It relies on a simple MySQL Database to manage a list of cereal products and nutritional values.
+It allows for four different types of operations: GET, POST, PUT and delete
 
-Getting Started
-Dependencies
+<h1>Getting started</h1>
+<h2>Dependencies</h2>
 Flask
 Flask-restful
 csv
 mysql
 Windows 11 Pro.
-Installing
+<h2>Installing</h2>
 
 How/where to download your program
 The code for the program can be found in the \Code-folder.
