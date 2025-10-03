@@ -7,14 +7,22 @@ It allows for four different types of operations: GET, POST, PUT and delete
 
 <h1>Getting started</h1>
 <h2>Dependencies</h2>
+
 Flask
+
 Flask-restful
+
 csv
+
 mysql
+
 Windows 11 Pro.
+
 <h2>Installing</h2>
 
-How/where to download your program
+Open Windows Powershell and run the following command <c>pip install flask-restful</c>
+
+<h1>How/where to download your program</h1>
 The code for the program can be found in the \Code-folder.
 Any modifications needed to be made to files/folders
 Executing program
