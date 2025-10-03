@@ -20,26 +20,38 @@ Windows 11 Pro.
 
 <h2>Installing</h2>
 
-Open Windows Powershell and run the following command <c>pip install flask-restful</c>
+Open Windows Powershell and run the following command ```pip install flask-restful```
 
 <h1>How/where to download your program</h1>
 The code for the program can be found in the \Code-folder.
-Any modifications needed to be made to files/folders
-Executing program
-How to run the program
-Step-by-step bullets
-code blocks for commands
-Help
-Any advise for common problems or issues.
+<h1>Any modifications needed to be made to files/folders</h1>
+None
+<h1>Executing program</h1>
+Open the parser.py - file in VS Code. Run it with the Python debugger and wait for it to finish.
+Once that is done, open the database.py file and run it.
+<h1>How to run the program</h1>
 
-command to run if program contains helper info
-Authors
+When you run it, the database.py - file will give you a local web address in the VS Code terminal. Copy it into your preferred browser and go to it.
+When you get there, you will see the message "Hello world"
+
+<h1>Step-by-step bullets</h1>
+
+<h1>code blocks for commands</h1>
+
+<h1>Help</h1>
+To send POST and DELETE requests to the webpage, you need the Postman app for sending them: https://www.postman.com/downloads/
+
+<h1>Any advise for common problems or issues.</h1>
+
+<h1>command to run if program contains helper info</h1>
+
+<h1>Authors</h1>
 Contributors names and contact info
 
-ex. Dominique Pizzie
-ex. @DomPizzie
+Vitor From
+Viktor.From@specialisterne.dk
 
-Version History
+<h1>Version History</h1>
 0.2
 Various bug fixes and optimizations
 See commit change or See release history
