@@ -33,15 +33,20 @@ Once that is done, open the database.py file and run it.
 
 When you run it, the database.py - file will give you a local web address in the VS Code terminal. Copy it into your preferred browser and go to it.
 When you get there, you will see the message "Hello world"
+Once there, you can add /get/ to the web address to test the GET request handling.
+In the Postman app, you can send POST and DELETE commands to test their handling.
 
 <h1>Step-by-step bullets</h1>
 
 <h1>code blocks for commands</h1>
+Sending GET commands ´´´/get´´´
+Sending GET commands with criteria and values ´´´/get?criteria=string&values=value´´´
 
 <h1>Help</h1>
 To send POST and DELETE requests to the webpage, you need the Postman app for sending them: https://www.postman.com/downloads/
 
 <h1>Any advise for common problems or issues.</h1>
+I am using ID as primary keys for the database. So right now, the parser.py - file doesn't actually work, since it tries to add data points with ID's that already exist.
 
 <h1>command to run if program contains helper info</h1>
 
