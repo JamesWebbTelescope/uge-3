@@ -48,32 +48,29 @@ class database_class():
         return result
 
     def put(self, name, mfr, type, calories, protein, fat, sodium, fiber, carbo, sugars, potass, vitamins, shelf, weight, cups, rating):
-        cursor = self.connector.cursor(dictionary=True)
-        if(name.find(",") > -1):
-            name_escape = name.replace(",", "/,")
-            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
-            #print(command)
-            cursor.execute(command)
+        #This function is for adding new items to the database
+        cursor = self.connector.cursor(dictionary=True) #Get a cursor
+        if(name.find(",") > -1): #If the name contains "," the database can't handle it
+            name_escape = name.replace(",", "/,") #So I replace it with /, so it ignores it
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')" #Design the command including all custom values
+            cursor.execute(command) #Send the command to the database, so it can be executed
         if(name.find("'") > -1):
-            name_escape = name.replace("'", "\"")
-            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
-            #print(command)
-            cursor.execute(command)
-        else:
-            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')"
-            cursor.execute(command)
-        #cursor.execute("INSERT INTO cerealdatabase.cereal VALUES ('{name}', 'N', 'C', 70, 4.0, 1.0, 130, '10', 5, 6, 280, 25, 3, '1', '0.33', '68.402.973')")
-        if cursor.with_rows == True:
+            name_escape = name.replace("'", "\"") #In the same fashion, I need to check for "'" and replace it with "\""
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name_escape}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')" #Design the command including all custom values
+            cursor.execute(command) #Send the command to the database, so it can be executed
+        else: #If the name doesn't have any special characters
+            command = f"INSERT INTO cerealdatabase.cereal VALUES ('{name}', '{mfr}', '{type}', {calories}, {protein}, {fat}, {sodium}, '{fiber}', {carbo}, {sugars}, {potass}, {vitamins}, {shelf}, {weight}, {cups}, '{rating}')" #Design the command including all custom values
+            cursor.execute(command) #Send the command to the database, so it can be executed
+        if cursor.with_rows == True: #Get the response from the database
             result = ( cursor.fetchall(), cursor.fetchwarnings() )
         else:
             result = cursor.fetchwarnings()
-        self.connector.commit()
+        self.connector.commit() #Close the connection
 
-        # Close cursor
-        cursor.close()
+        cursor.close() # Close cursor
 
         # Do something with result.
-        print(result)
+        print(result) #This probably needs to be replaced.
 
     def find(self, ID):
         #This function searches the database for products with the given ID
@@ -126,39 +123,41 @@ class Startpage(Resource):
 
     
 class Read(Resource):
-    type = "None"
-    database = database_class()
+    database = database_class() #Get an instance of the database
     def get(self):
-        self.database.open_connection()
-        criteria = request.args.get("criteria")
-        if criteria == None:
-            result = self.database.get('None', 0)
-            return jsonify({'message': result})
-        else:
-            values = request.args.get("values",-1,  type=int)
-            result = self.database.get(criteria, values)
-            return jsonify({'message': result})
-        #return jsonify({'message': self.database.find(id)})
+        #This is where I handle the GET requests for the API
+        self.database.open_connection() #Open a connection to the database
+        criteria = request.args.get("criteria") #Check if there is a query including the criteria that I have to filter for
+        if criteria == None: #If not
+            result = self.database.get('None', 0) #Just get everything on the database
+            return jsonify({'message': result}) #Update the webpage with the result
+        else: #If there IS a criterion:
+            values = request.args.get("values",-1,  type=int) #Get the value that I should filter for
+            result = self.database.get(criteria, values) #Filter through the database for the 
+            return jsonify({'message': result}) #Opdater hjemmesiden med resultatet
     
 class Create(Resource):
+    #Get an instance of the database class
     database = database_class()
     def post(self):
-        self.database.open_connection()
-        new_book = request.json
-        print(new_book)
-        result = self.database.find(1)
-        return jsonify({'message': result})
+        #This function is for handling the POST requests for the API
+        self.database.open_connection() #Open a connection to the database
+        new_book = request.json #Get something from the HTTP request
+        print(new_book) #print it out
+        result = self.database.find(1) #Find the database item with ID = 1
+        return jsonify({'message': result}) #Update the webpage with the result
     
 class Delete(Resource):
-    database = database_class()
+    #This function handles the DELETE requests for the API
+    database = database_class() #Get an instance of the database class
     def delete(self, id):
-        self.database.open_connection()
-        result = self.database.find(id)
-        if len(result[0]) > 0:
-            result = self.database.remove(id)
-            return jsonify({'result': result})
+        self.database.open_connection() #Open a connection to the database
+        result = self.database.find(id) #Check whether the item with the given id actually exists
+        if len(result[0]) > 0: #If it does exist
+            result = self.database.remove(id) #Remove it
+            return jsonify({'result': result}) #Update the webpage with the result
         else:
-            return jsonify({'message': 'The ID doesn\'t exist'})
+            return jsonify({'message': 'The ID doesn\'t exist'}) #Update the webpage, saying that the ID doesn't exist
 
     
 
